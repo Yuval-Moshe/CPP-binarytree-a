@@ -42,6 +42,9 @@ namespace ariel
         {
             return *this;
         }
+        friend ostream& operator<<(ostream& os, BinaryTree& t){
+            return os;
+        }
 
         class iterator
         {
@@ -76,6 +79,12 @@ namespace ariel
                 return *(new T());
             }
         };
+        iterator &begin(){
+            return *(new iterator());
+        }
+        iterator &end(){
+            return *(new iterator());
+        }
         iterator &begin_preorder()
         {
             return *(new iterator());

@@ -30,6 +30,7 @@ TEST_CASE("Test Basic Binary Tree Operations Correctnes")
             /* Replacing the root with a random variable*/
             t_int.add_root(root);
             /* In all traversal orders, the iterator should be pointing to the new root*/
+            CHECK_EQ(*(t_int.begin()), root);
             CHECK_EQ(*(t_int.begin_inorder()), root);
             CHECK_EQ(*(t_int.begin_postorder()), root);
             CHECK_EQ(*(t_int.begin_preorder()), root);
@@ -40,16 +41,16 @@ TEST_CASE("Test Basic Binary Tree Operations Correctnes")
     {
         BinaryTree<char> t_char;
         time_t t;
-        srand((unsigned)time(&t));
         /* Generate random root char*/
-        char root = 'a' + (rand() % 26);
+        char root = 'a';
         t_char.add_root(root);
         char prev = root;
         string inOrder, postOrder, preOrder;
-        for (int i = 0; i < 100; i++)
+        inOrder = postOrder = preOrder = "a";
+        for (int i = 1; i < 26; i++)
         {
             /* Pick random new chanr*/
-            char curr = 'a' + (rand() % 26);
+            char curr = 'a' + i;
             /* Add him as the previous char's left son */
             t_char.add_left(prev, curr);
             /* inOrder - add the char at the front of the string */
@@ -58,18 +59,22 @@ TEST_CASE("Test Basic Binary Tree Operations Correctnes")
             postOrder = curr + postOrder;
             /* preOrder - add the char at the end of the string */
             preOrder += curr;
+            prev = curr;
         }
+        BinaryTree<char>::iterator it = t_char.begin();
         BinaryTree<char>::iterator in_it = t_char.begin_inorder();
         BinaryTree<char>::iterator post_it = t_char.begin_postorder();
         BinaryTree<char>::iterator pre_it = t_char.begin_preorder();
         /* Iterate over the tree in see if the output is identical to the strings */
         for (unsigned long i = 0; i < inOrder.length(); i++)
         {
+            CHECK_EQ(*(it++), inOrder[i]);
             CHECK_EQ(*(in_it++), inOrder[i]);
             CHECK_EQ(*(post_it++), postOrder[i]);
             CHECK_EQ(*(pre_it++), preOrder[i]);
         }
         /* At the end of the for loop, the iterator should be pointing to the end of the tree*/
+        CHECK((it == t_char.end()));
         CHECK((in_it == t_char.end_inorder()));
         CHECK((post_it == t_char.end_postorder()));
         CHECK((pre_it == t_char.end_preorder()));
@@ -80,7 +85,6 @@ TEST_CASE("Test Basic Binary Tree Operations Correctnes")
         string word_bank[11] = {"Checking ", "correctness ", "of ", "right ", "linked ", "list, ", "the ", "sentence ", "should ", "be ", "logical."};
         BinaryTree<string> t_str;
         time_t t;
-        srand((unsigned)time(&t));
         /* Add "Checking " as the root of the tree */
         t_str.add_root(word_bank[0]);
         /* Save "Checking " as prev*/
@@ -90,21 +94,25 @@ TEST_CASE("Test Basic Binary Tree Operations Correctnes")
             /* Add each word in the array in order as the right son of the previous word */
             string curr = word_bank[i];
             t_str.add_right(prev, curr);
+            prev = curr;
         }
+        BinaryTree<string>::iterator it = t_str.begin();
         BinaryTree<string>::iterator in_it = t_str.begin_inorder();
         BinaryTree<string>::iterator post_it = t_str.begin_postorder();
         BinaryTree<string>::iterator pre_it = t_str.begin_preorder();
         /* Iterate over the tree in see if the output is identical to the strings */
         for (unsigned long i = 0; i < 11; i++)
         {
-            /* inOrder - the output should be: "Checking correctness of right linked list, the sentence should be logical." */
+            /* inOrder + Regular Iterator - the output should be: "Checking correctness of right linked list, the sentence should be logical." */
             CHECK_EQ(*(in_it++), word_bank[i]);
+            CHECK_EQ(*(it++), word_bank[i]);
             /* postOrder - the output should be: "logical. be should sentence the list, linked right of correctness Checking" */
             CHECK_EQ(*(post_it++), word_bank[10 - i]);
             /* preOrder - the output should be: "Checking correctness of right linked list, the sentence should be logical." */
             CHECK_EQ(*(pre_it++), word_bank[i]);
         }
         /* At the end of the for loop, the iterator should be pointing to the end of the tree*/
+        CHECK((it == t_str.end_inorder()));
         CHECK((in_it == t_str.end_inorder()));
         CHECK((post_it == t_str.end_postorder()));
         CHECK((pre_it == t_str.end_preorder()));
@@ -134,7 +142,7 @@ TEST_CASE("Test Basic Binary Tree Operations Correctnes")
         CHECK(check);
         /* Replace tree root with false */
         t_bool.add_root(false);
-        /* Now trying to add right and left sons of false should not throw exception 
+        /* Now trying to add right and left sons of false should not throw exception
         since the root of the tree is false */
         CHECK_NOTHROW(t_bool.add_left(false, true));
         CHECK_NOTHROW(t_bool.add_right(false, true));
@@ -172,9 +180,9 @@ TEST_CASE("Check Binary Tree Complex Additions")
         *                        /   \                  /     \                 *
         *                   we're(5)  check,(8)      In(17)    same(20)         *
         *                  /     \                   /  \                       *
-        *          sentence(3)    going(6)      be(15)   THE(18)                *  
-        *         /        \                      /  \                          * 
-        *       is(1)       that(4)     Sentence(13)  presented(16)             *         
+        *          sentence(3)    going(6)      be(15)   THE(18)                *
+        *         /        \                      /  \                          *
+        *       is(1)       that(4)     Sentence(13)  presented(16)             *
         *     /    \                     /        \                             *
         * This(0)      the(2)         The(12)      should(14)                   *
         *                                                                       *
@@ -187,9 +195,9 @@ TEST_CASE("Check Binary Tree Complex Additions")
         /* Create a vector of all the words in the senctence, without the spaces */
         vector<string> words{istream_iterator<string>{iss}, istream_iterator<string>{}};
         /* Add "iteration" as the root of the tree, "in" as his left son and "logical" as his right son */
-        t_str.add_root(string("iteration"));
-        t_str.add_left(string("iteration"), string("in"));
-        t_str.add_right(string("iteration"), string("logical"));
+        t_str.add_root(string("iteration,"));
+        t_str.add_left(string("iteration,"), string("in"));
+        t_str.add_right(string("iteration,"), string("logical"));
         /* Add the words based on the index of the word in the vector (view the image above for better understaing) */
         for (unsigned long i = 9; i >= 3; i-=2)
         {
@@ -209,16 +217,22 @@ TEST_CASE("Check Binary Tree Complex Additions")
             t_str.add_left(prev_l, left_l);
             t_str.add_right(prev_l, right_l);
         }
-        t_str.add_left(string("Sentence"), string("the"));
+        t_str.add_left(string("Sentence"), string("The"));
         t_str.add_right(string("Sentence"), string("should"));
-        string ans;
+        string ans, ans_in;
         /* Create the comparison string by adding the word with spaces sperating them */
-        for (BinaryTree<string>::iterator it = t_str.begin_inorder(); it != t_str.end_inorder(); ++it)
+        for (BinaryTree<string>::iterator it = t_str.begin_inorder(); it != t_str.end_inorder(); it++)
+        {
+            ans_in = ans_in + " " + *it;
+        }
+        /* Check both regular and inOrder iterator because they should act the same */
+        for (BinaryTree<string>::iterator it = t_str.begin(); it != t_str.end(); it++)
         {
             ans = ans + " " + *it;
         }
         /* Remove the space before the first word, and compare */
         CHECK_EQ(s, ans.substr(1));
+        CHECK_EQ(s, ans_in.substr(1));
     }
 
     SUBCASE("PostOrder")
@@ -235,7 +249,7 @@ TEST_CASE("Check Binary Tree Complex Additions")
         *              /     \                          /  \                    *
         *          that(4)    we're(5)               be(15)  presented(16)      *
         *         /    \                             /  \                       *
-        *      the(2)   sentence(3)        Sentence(13)  should(14)             *      
+        *      the(2)   sentence(3)        Sentence(13)  should(14)             *
         *     /   \                         /        \                          *
         * This(0)  is(1)         iteration,(11)       The(12)                   *
         *                                                                       *
@@ -248,11 +262,11 @@ TEST_CASE("Check Binary Tree Complex Additions")
         /* Create a vector of all the words in the senctence, without the spaces */
         vector<string> words{istream_iterator<string>{iss}, istream_iterator<string>{}};
         /* Add "order" as the root of the tree, "PostOrder" as his left son and "logical" as his right son */
-        t_str.add_root(string("order"));
-        t_str.add_left(string("order"), string("PostOrder"));
-        t_str.add_right(string("order"), string("logical"));
+        t_str.add_root(string("order."));
+        t_str.add_left(string("order."), string("PostOrder"));
+        t_str.add_right(string("order."), string("logical"));
         /* Add the words based on the index of the word in the vector (view the image above for better understaing) */
-        for (unsigned long i = 10; i >= 2; i-=2)
+        for (unsigned long i = 10; i >= 2; i -= 2)
         {
             string prev_l = words[i];
             string left_l = words[i - 2];
@@ -260,7 +274,7 @@ TEST_CASE("Check Binary Tree Complex Additions")
             t_str.add_left(prev_l, left_l);
             t_str.add_right(prev_l, right_l);
         }
-        for (unsigned long i = 21; i >= 13; i-=2)
+        for (unsigned long i = 21; i >= 13; i -= 2)
         {
             string prev_l = words[i];
             string left_l = words[i - 2];
@@ -270,7 +284,7 @@ TEST_CASE("Check Binary Tree Complex Additions")
         }
         string ans;
         /* Create the comparison string by adding the word with spaces sperating them */
-        for (BinaryTree<string>::iterator it = t_str.begin_inorder(); it != t_str.end_inorder(); ++it)
+        for (BinaryTree<string>::iterator it = t_str.begin_postorder(); it != t_str.end_postorder(); ++it)
         {
             ans = ans + " " + *it;
         }
@@ -287,15 +301,15 @@ TEST_CASE("Check Binary Tree Complex Additions")
         *                               is(1)                      The(12)       *
         *                              /  \                       /   \          *
         *                          the(2)  iteration,(11) Sentence(13) order(22) *
-        *                          /   \                  /     \                *    
-        *                 sentence(3)   PreOrder(10) should(14)  logical(21)     *         
-        *                 /        \                 /      \                    *       
-        *            that(4)       in(9)          be(15)     same(20)            *   
-        *            /    \                       /  \                           *     
-        *      we're(5)    check,(8)   presented(16)  exact(19)                  *                  
-        *      /     \                   /         \                             *         
-        * going(6)    to(7)           In(17)        THE(18)                      *    
-        *                                                                        *           
+        *                          /   \                  /     \                *
+        *                 sentence(3)   PreOrder(10) should(14)  logical(21)     *
+        *                 /        \                 /      \                    *
+        *            that(4)       in(9)          be(15)     same(20)            *
+        *            /    \                       /  \                           *
+        *      we're(5)    check,(8)   presented(16)  exact(19)                  *
+        *      /     \                   /         \                             *
+        * going(6)    to(7)           In(17)        THE(18)                      *
+        *                                                                        *
         **************************************************************************
         */
 
@@ -327,7 +341,7 @@ TEST_CASE("Check Binary Tree Complex Additions")
         }
         string ans;
         /* Create the comparison string by adding the word with spaces sperating them */
-        for (BinaryTree<string>::iterator it = t_str.begin_inorder(); it != t_str.end_inorder(); ++it)
+        for (BinaryTree<string>::iterator it = t_str.begin_preorder(); it != t_str.end_preorder(); ++it)
         {
             ans = ans + " " + *it;
         }
@@ -341,21 +355,21 @@ TEST_CASE("Check BinaryTree Actions")
     SUBCASE("Overriding Values")
     {
         /************ Creating State ****************
-        *                                          * 
-        *                100                       *     
+        *                                          *
+        *                100                       *
         *               /   \                      *
         *             99     101                   *
-        *            /         \                   *                       
-        *          98           102                *       
-        *         ...             ...              *    
-        *        ...               ...             * 
-        *       ...                 ...            *     
-        *      3                     197           *       
-        *     /                        \           * 
-        *    2                          198        *         
-        *   /                             \        *      
+        *            /         \                   *
+        *          98           102                *
+        *         ...             ...              *
+        *        ...               ...             *
+        *       ...                 ...            *
+        *      3                     197           *
+        *     /                        \           *
+        *    2                          198        *
+        *   /                             \        *
         *  1                               199     *
-        *                                          *        
+        *                                          *
         ********************************************
         */
 
@@ -376,28 +390,33 @@ TEST_CASE("Check BinaryTree Actions")
             t_double.add_right(prev, i);
             prev = i;
         }
-        BinaryTree<double>::iterator prev_it = t_double.begin_inorder();
-        /*In inOrder iteration, each node should be greter than by value then the previous node in the iteration */
+        BinaryTree<double>::iterator prev_it = t_double.begin();
+        BinaryTree<double>::iterator prev_it_in = t_double.begin_inorder();
+        /*In inOrder & Regulate iteration, each node should be greter than by value then the previous node in the iteration */
         for (BinaryTree<double>::iterator it = ++(t_double.begin_inorder()); it != t_double.end_inorder(); ++it)
+        {
+            CHECK_LT(*prev_it_in, *it);
+        }
+        for (BinaryTree<double>::iterator it = ++(t_double.begin()); it != t_double.end(); ++it)
         {
             CHECK_LT(*prev_it, *it);
         }
         /********** Changing State To: **************
-        *                                          * 
-        *               -100                       *     
+        *                                          *
+        *               -100                       *
         *               /   \                      *
         *            -99    -101                   *
-        *            /          \                  *                       
-        *         -98            -102              *       
-        *         ...              ...             *    
-        *        ...                ...            * 
-        *       ...                  ...           *     
-        *     -3                     -197          *       
-        *     /                         \          * 
-        *   -2                          -198       *         
-        *   /                              \       *      
+        *            /          \                  *
+        *         -98            -102              *
+        *         ...              ...             *
+        *        ...                ...            *
+        *       ...                  ...           *
+        *     -3                     -197          *
+        *     /                         \          *
+        *   -2                          -198       *
+        *   /                              \       *
         * -1                               -199    *
-        *                                          *        
+        *                                          *
         ********************************************
         */
 
@@ -417,9 +436,14 @@ TEST_CASE("Check BinaryTree Actions")
             t_double.add_right(prev, -i);
             prev = -i;
         }
-        prev_it = t_double.begin_inorder();
-        /*In inOrder iteration, each node should be less than by value then the previous node in the iteration */
+        prev_it = t_double.begin();
+        prev_it_in = t_double.begin_inorder();
+        /*In inOrder & Regular iteration, each node should be less than by value then the previous node in the iteration */
         for (BinaryTree<double>::iterator it = ++(t_double.begin_inorder()); it != t_double.end_inorder(); ++it)
+        {
+            CHECK_GT(*prev_it, *it);
+        }
+        for (BinaryTree<double>::iterator it = ++(t_double.begin()); it != t_double.end(); ++it)
         {
             CHECK_GT(*prev_it, *it);
         }
@@ -428,21 +452,21 @@ TEST_CASE("Check BinaryTree Actions")
     SUBCASE("Replacing left and right sons shouldn't also remove all sub-nodes of the replaced nodes ")
     {
         /************ Creating State ************
-        *                                       * 
-        *                 a                     *     
+        *                                       *
+        *                 a                     *
         *               /   \                   *
         *            'b'     'B'                *
-        *            /         \                *                       
-        *          'c'          'C'             *       
-        *         ...             ...           *    
-        *        ...               ...          * 
-        *       ...                 ...         *     
-        *     'w'                    'W'        *       
-        *     /                        \        * 
-        *   'x'                         'X'     *         
-        *   /                             \     *      
+        *            /         \                *
+        *          'c'          'C'             *
+        *         ...             ...           *
+        *        ...               ...          *
+        *       ...                 ...         *
+        *     'w'                    'W'        *
+        *     /                        \        *
+        *   'x'                         'X'     *
+        *   /                             \     *
         * 'y'                              'Y'  *
-        *                                       *        
+        *                                       *
         ****************************************/
 
         BinaryTree<char> t_char;
@@ -451,57 +475,62 @@ TEST_CASE("Check BinaryTree Actions")
         t_char.add_left('a', 'b');
         t_char.add_right('a', 'B');
         char prev = 'b';
-        /* Create a tree as shown above, the right sub tree nodes are all 
+        /* Create a tree as shown above, the right sub tree nodes are all
         upper case letters, sorted from B to Y, the left tree nodes are all
         lower case letters, sorted from b to y */
         for (char i = 'c'; i < 'z'; i++)
         {
             t_char.add_left(prev, i);
-            t_char.add_left((char)(prev - 32), (char)(i - 32));
+            t_char.add_right((char)(prev - 32), (char)(i - 32));
             prev = i;
         }
         t_char.add_left('a', 'z');
         t_char.add_right('a', 'Z');
 
         /*********** State After Change *********
-        *                                       * 
-        *                 a                     *     
+        *                                       *
+        *                 a                     *
         *               /   \                   *
-        *            'z'     'Z'                *     
-        *            /         \                *                       
-        *          'c'          'C'             *       
-        *         ...             ...           *    
-        *        ...               ...          * 
-        *       ...                 ...         *     
-        *     'w'                    'W'        *       
-        *     /                        \        * 
-        *   'x'                         'X'     *         
-        *   /                             \     *      
+        *            'z'     'Z'                *
+        *            /         \                *
+        *          'c'          'C'             *
+        *         ...             ...           *
+        *        ...               ...          *
+        *       ...                 ...         *
+        *     'w'                    'W'        *
+        *     /                        \        *
+        *   'x'                         'X'     *
+        *   /                             \     *
         * 'y'                              'Y'  *
-        *                                       *  
+        *                                       *
         *****************************************
-        After replacing the right and left sons of 'a' (the root) to 'z' and 
+        After replacing the right and left sons of 'a' (the root) to 'z' and
         'Z' (as shown above), the entire sub-left and sub-right tree should remain,
         only the values themselvs should change  */
         CHECK_THROWS(t_char.add_left('b', 'c'));
-        CHECK_THROWS(t_char.add_left('B', 'C'));
+        CHECK_THROWS(t_char.add_right('B', 'C'));
         string inOrder_compare = "zaZ";
         prev = 'z';
         for (char i = 'c'; i < 'z'; i++)
         {
             CHECK_NOTHROW(t_char.add_left(prev, i));
-            CHECK_NOTHROW(t_char.add_left((char)(prev - 32), (char)(i - 32)));
+            CHECK_NOTHROW(t_char.add_right((char)(prev - 32), (char)(i - 32)));
             inOrder_compare = i + inOrder_compare + (char)(i - 32);
             prev = i;
         }
-        string inOrder;
+        string inOrder, Regular;
         /* Build a string by iterating in pre,post, and in order*/
         for (BinaryTree<char>::iterator it = t_char.begin_inorder(); it != t_char.end_inorder(); it++)
         {
             inOrder += *it;
         }
+        for (BinaryTree<char>::iterator it = t_char.begin(); it != t_char.end(); it++)
+        {
+            Regular += *it;
+        }
         /*Compare to the expected output*/
         CHECK_EQ(inOrder_compare, inOrder);
+        CHECK_EQ(inOrder_compare, Regular);
     }
 }
 
@@ -511,28 +540,35 @@ TEST_CASE("Check Aditional Iterator Operators")
     {
         BinaryTree<bool> t_bool;
         /* If the tree is empty, begin() and end() iterators should be the same; */
+        CHECK((t_bool.begin() == t_bool.end()));
         CHECK((t_bool.begin_inorder() == t_bool.end_inorder()));
         CHECK((t_bool.begin_postorder() == t_bool.end_postorder()));
         CHECK((t_bool.begin_preorder() == t_bool.end_preorder()));
         t_bool.add_root(true);
         /* After adding root to the tree, begin() and end() iterators shouldn't be the same; */
+        CHECK_FALSE((t_bool.begin() == t_bool.end()));
         CHECK_FALSE((t_bool.begin_inorder() == t_bool.end_inorder()));
         CHECK_FALSE((t_bool.begin_postorder() == t_bool.end_postorder()));
         CHECK_FALSE((t_bool.begin_preorder() == t_bool.end_preorder()));
+        BinaryTree<bool>::iterator it = t_bool.begin();
         BinaryTree<bool>::iterator it_in = t_bool.begin_inorder();
         BinaryTree<bool>::iterator it_post = t_bool.begin_postorder();
         BinaryTree<bool>::iterator it_pre = t_bool.begin_preorder();
         /* In post increment, begin() and end() iterators shouldn't be the same; */
+        CHECK_FALSE((it++ == t_bool.end()));
         CHECK_FALSE((it_in++ == t_bool.end_inorder()));
         CHECK_FALSE((it_post++ == t_bool.end_postorder()));
         CHECK_FALSE((it_pre++ == t_bool.end_preorder()));
+        CHECK((it == t_bool.end()));
         CHECK((it_in == t_bool.end_inorder()));
         CHECK((it_post == t_bool.end_postorder()));
         CHECK((it_pre == t_bool.end_preorder()));
+        it = t_bool.begin();
         it_in = t_bool.begin_inorder();
         it_post = t_bool.begin_postorder();
         it_pre = t_bool.begin_preorder();
         /* In pre increment, begin() and end() iterators shouldn't be the same; */
+        CHECK((++it == t_bool.end_inorder()));
         CHECK((++it_in == t_bool.end_inorder()));
         CHECK((++it_post == t_bool.end_postorder()));
         CHECK((++it_pre == t_bool.end_preorder()));
@@ -555,40 +591,50 @@ TEST_CASE("Check Aditional Iterator Operators")
             t_str.add_left(prev, str);
             prev = str;
         }
-        int i = 1;
-        /* Comparing the increasing size to the size of the string */
+        int i = 50;
+        /* Comparing the increasing size to the size of the string in inOrder iteration*/
         for (BinaryTree<string>::iterator it = t_str.begin_inorder(); it != t_str.end_inorder(); it++)
         {
-            CHECK_EQ(i++, it->size());
+            CHECK_EQ(i--, it->size());
+        }
+        i = 50;
+        /* Comparing the increasing size to the size of the string in regular iteration*/
+        for (BinaryTree<string>::iterator it = t_str.begin(); it != t_str.end(); it++)
+        {
+            CHECK_EQ(i--, it->size());
         }
     }
     SUBCASE("*")
     {
         /****************************************
-        *                   ____0____                  
+        *                   ____0____
         *                  /         \
         *                 1           2
         *               /   \       /   \
-        *              3     4     5     6 
+        *              3     4     5     6
         *             / \   / \   / \   / \
         *            7   8 9  10 11 12 13  14
         *           /\  /\/\  /\ /\ /\ /\  /\
-        *          ... ... ... ... ... ... ... 
+        *          ... ... ... ... ... ... ...
         *         ... ... ... ... ... ... ... ..
         *        ... ... ... ... ... ... ... ... .
         */
         BinaryTree<int> t_int;
         t_int.add_root(0);
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i <= 100; i++)
         {
             t_int.add_left(i, 2 * i + 1);
             t_int.add_right(i, 2 * i + 2);
         }
         /* Sum of all elements in the tree should be the sum of an arithmetic progression from 1 to 202 = 20503 */
         int sum = (202 + 1) * 202 / 2;
-        int sum_inOrder, sum_preOrder, sum_postOrder;
-        sum_inOrder = sum_postOrder = sum_preOrder = 0;
+        int sum_inOrder, sum_preOrder, sum_postOrder, sum_Regular;
+        sum_inOrder = sum_postOrder = sum_preOrder = sum_Regular= 0;
         /* Iterate over the tree and sum all the elements, in all the methods */
+        for (BinaryTree<int>::iterator it = t_int.begin(); it != t_int.end(); it++)
+        {
+            sum_Regular += *it;
+        }
         for (BinaryTree<int>::iterator it = t_int.begin_inorder(); it != t_int.end_inorder(); it++)
         {
             sum_inOrder += *it;
@@ -601,6 +647,7 @@ TEST_CASE("Check Aditional Iterator Operators")
         {
             sum_postOrder += *it;
         }
+        CHECK_EQ(sum, sum_Regular);
         CHECK_EQ(sum, sum_inOrder);
         CHECK_EQ(sum, sum_preOrder);
         CHECK_EQ(sum, sum_postOrder);
@@ -615,8 +662,12 @@ TEST_CASE("Check Aditional Iterator Operators")
         /* After removing 202 and 201, the sun of all elements in the tree should be the sum of an
          arithmetic progression from 1 to 200 = 20100 */
         sum = (200 + 1) * 200 / 2;
-        sum_inOrder = sum_postOrder = sum_preOrder = 0;
+        sum_inOrder = sum_postOrder = sum_preOrder = sum_Regular = 0;
         /* Iterate over the tree and sum all the elements, in all the methods */
+        for (BinaryTree<int>::iterator it = t_int.begin(); it != t_int.end(); it++)
+        {
+            sum_Regular += *it;
+        }
         for (BinaryTree<int>::iterator it = t_int.begin_inorder(); it != t_int.end_inorder(); it++)
         {
             sum_inOrder += *it;
@@ -629,6 +680,7 @@ TEST_CASE("Check Aditional Iterator Operators")
         {
             sum_postOrder += *it;
         }
+        CHECK_EQ(sum, sum_Regular);
         CHECK_EQ(sum, sum_inOrder);
         CHECK_EQ(sum, sum_preOrder);
         CHECK_EQ(sum, sum_postOrder);
@@ -640,8 +692,12 @@ TEST_CASE("Check Aditional Iterator Operators")
                 *it = 0;
             }
         }
-        sum_inOrder = sum_postOrder = sum_preOrder = 0;
+        sum_inOrder = sum_postOrder = sum_preOrder = sum_Regular = 0;
         /* Iterate over the tree and sum all the elements, in all the methods */
+        for (BinaryTree<int>::iterator it = t_int.begin(); it != t_int.end(); it++)
+        {
+            sum_Regular += *it;
+        }
         for (BinaryTree<int>::iterator it = t_int.begin_inorder(); it != t_int.end_inorder(); it++)
         {
             sum_inOrder += *it;
@@ -654,6 +710,7 @@ TEST_CASE("Check Aditional Iterator Operators")
         {
             sum_postOrder += *it;
         }
+        CHECK_EQ(1, sum_Regular);
         CHECK_EQ(1, sum_inOrder);
         CHECK_EQ(1, sum_preOrder);
         CHECK_EQ(1, sum_postOrder);

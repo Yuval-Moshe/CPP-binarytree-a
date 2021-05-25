@@ -1,5 +1,4 @@
 #pragma once
-#include <stack>
 
 namespace ariel
 {
@@ -10,17 +9,11 @@ namespace ariel
         struct Node
         {
             T _value;
-            Node *_parent;
             Node *_left;
             Node *_right;
-            Node(T value, Node *parent = nullptr, Node *left = nullptr, Node *right = nullptr)
-                : _value(value), _parent(parent), _left(left), _right(right){};
-            ~Node()
-            {
-                delete _parent;
-                delete _right;
-                delete _left;
-            }
+            Node(T value, Node *left = nullptr, Node *right = nullptr)
+                : _value(value), _left(left), _right(right){};
+            ~Node(){}
         };
 
         Node *_root;
@@ -79,35 +72,65 @@ namespace ariel
                 return *(new T());
             }
         };
+        class inOrder_iterator: public iterator{
+            iterator &operator++(int)
+            {
+                return *this;
+            }
+            iterator &operator++()
+            {
+                return *this;
+            }
+        };
+        class preOrder_itertator: public iterator{
+            iterator &operator++(int)
+            {
+                return *this;
+            }
+            iterator &operator++()
+            {
+                return *this;
+            }
+        };
+        class postOrder_iterator: public iterator{
+            iterator &operator++(int)
+            {
+                return *this;
+            }
+            iterator &operator++()
+            {
+                return *this;
+            }
+        };
         iterator &begin(){
-            return *(new iterator());
+            return *(new inOrder_iterator());
         }
         iterator &end(){
-            return *(new iterator());
+            return *(new inOrder_iterator());
         }
         iterator &begin_preorder()
         {
-            return *(new iterator());
+            return *(new preOrder_itertator());
         }
         iterator &end_preorder()
         {
-            return *(new iterator());
+            return *(new preOrder_itertator());
         }
         iterator &begin_inorder()
         {
-            return *(new iterator());
+            return *(new inOrder_iterator());
         }
         iterator &end_inorder()
         {
-            return *(new iterator());
+            return *(new inOrder_iterator());
         }
         iterator &begin_postorder()
         {
-            return *(new iterator());
+            return *(new postOrder_iterator());
         }
         iterator &end_postorder()
         {
-            return *(new iterator());
+            return *(new postOrder_iterator());
         }
     };
 }

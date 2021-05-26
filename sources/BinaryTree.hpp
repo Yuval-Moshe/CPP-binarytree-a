@@ -13,14 +13,14 @@ namespace ariel
             Node *_right;
             Node(T value, Node *left = nullptr, Node *right = nullptr)
                 : _value(value), _left(left), _right(right){};
-            ~Node(){}
+            ~Node() {}
         };
 
         Node *_root;
 
     public:
-        BinaryTree() : _root(nullptr){};
-
+        BinaryTree(){};
+        BinaryTree(BinaryTree &t){};
         ~BinaryTree(){};
 
         BinaryTree &add_root(T value)
@@ -35,13 +35,14 @@ namespace ariel
         {
             return *this;
         }
-        friend ostream& operator<<(ostream& os, BinaryTree& t){
+        friend ostream &operator<<(ostream &os, const BinaryTree &t)
+        {
             return os;
         }
 
         class iterator
         {
-        private:
+        protected:
             Node *node_ptr;
 
         public:
@@ -55,7 +56,7 @@ namespace ariel
                 return *this;
             }
 
-            bool operator!=(iterator &other) const
+            bool operator!=(const iterator &other) const
             {
                 return false;
             }
@@ -72,7 +73,8 @@ namespace ariel
                 return *(new T());
             }
         };
-        class inOrder_iterator: public iterator{
+        class inOrder_iterator : public iterator
+        {
             iterator &operator++(int)
             {
                 return *this;
@@ -82,7 +84,8 @@ namespace ariel
                 return *this;
             }
         };
-        class preOrder_itertator: public iterator{
+        class preOrder_itertator : public iterator
+        {
             iterator &operator++(int)
             {
                 return *this;
@@ -92,7 +95,8 @@ namespace ariel
                 return *this;
             }
         };
-        class postOrder_iterator: public iterator{
+        class postOrder_iterator : public iterator
+        {
             iterator &operator++(int)
             {
                 return *this;
@@ -102,10 +106,12 @@ namespace ariel
                 return *this;
             }
         };
-        iterator &begin(){
+        iterator &begin()
+        {
             return *(new inOrder_iterator());
         }
-        iterator &end(){
+        iterator &end()
+        {
             return *(new inOrder_iterator());
         }
         iterator &begin_preorder()

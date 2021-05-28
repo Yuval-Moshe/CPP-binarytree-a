@@ -61,10 +61,10 @@ TEST_CASE("Test Basic Binary Tree Operations Correctnes")
             preOrder += curr;
             prev = curr;
         }
-        BinaryTree<char>::iterator it = t_char.begin();
-        BinaryTree<char>::iterator in_it = t_char.begin_inorder();
-        BinaryTree<char>::iterator post_it = t_char.begin_postorder();
-        BinaryTree<char>::iterator pre_it = t_char.begin_preorder();
+        auto it = t_char.begin();
+        auto in_it = t_char.begin_inorder();
+        auto post_it = t_char.begin_postorder();
+        auto pre_it = t_char.begin_preorder();
         /* Iterate over the tree in see if the output is identical to the strings */
         for (unsigned long i = 0; i < inOrder.length(); i++)
         {
@@ -96,10 +96,10 @@ TEST_CASE("Test Basic Binary Tree Operations Correctnes")
             t_str.add_right(prev, curr);
             prev = curr;
         }
-        BinaryTree<string>::iterator it = t_str.begin();
-        BinaryTree<string>::iterator in_it = t_str.begin_inorder();
-        BinaryTree<string>::iterator post_it = t_str.begin_postorder();
-        BinaryTree<string>::iterator pre_it = t_str.begin_preorder();
+        auto it = t_str.begin();
+        auto in_it = t_str.begin_inorder();
+        auto post_it = t_str.begin_postorder();
+        auto pre_it = t_str.begin_preorder();
         /* Iterate over the tree in see if the output is identical to the strings */
         for (unsigned long i = 0; i < 11; i++)
         {
@@ -134,7 +134,7 @@ TEST_CASE("Test Basic Binary Tree Operations Correctnes")
         CHECK_THROWS(t_bool.add_left(false, true));
         CHECK_THROWS(t_bool.add_right(false, true));
         bool check = true;
-        for (BinaryTree<bool>::iterator it = t_bool.begin_inorder(); it != t_bool.end_inorder(); it++)
+        for (auto it = t_bool.begin_inorder(); it != t_bool.end_inorder(); it++)
         {
             check &= *it;
         }
@@ -147,7 +147,7 @@ TEST_CASE("Test Basic Binary Tree Operations Correctnes")
         CHECK_NOTHROW(t_bool.add_left(false, true));
         CHECK_NOTHROW(t_bool.add_right(false, true));
         check = true;
-        for (BinaryTree<bool>::iterator it = t_bool.begin_inorder(); it != t_bool.end_inorder(); it++)
+        for (auto it = t_bool.begin_inorder(); it != t_bool.end_inorder(); it++)
         {
             check &= *it;
         }
@@ -221,12 +221,12 @@ TEST_CASE("Check Binary Tree Complex Additions")
         t_str.add_right(string("Sentence"), string("should"));
         string ans, ans_in;
         /* Create the comparison string by adding the word with spaces sperating them */
-        for (BinaryTree<string>::iterator it = t_str.begin_inorder(); it != t_str.end_inorder(); it++)
+        for (auto it = t_str.begin_inorder(); it != t_str.end_inorder(); it++)
         {
             ans_in = ans_in + " " + *it;
         }
         /* Check both regular and inOrder iterator because they should act the same */
-        for (BinaryTree<string>::iterator it = t_str.begin(); it != t_str.end(); it++)
+        for (auto it = t_str.begin(); it != t_str.end(); it++)
         {
             ans = ans + " " + *it;
         }
@@ -284,7 +284,7 @@ TEST_CASE("Check Binary Tree Complex Additions")
         }
         string ans;
         /* Create the comparison string by adding the word with spaces sperating them */
-        for (BinaryTree<string>::iterator it = t_str.begin_postorder(); it != t_str.end_postorder(); ++it)
+        for (auto it = t_str.begin_postorder(); it != t_str.end_postorder(); ++it)
         {
             ans = ans + " " + *it;
         }
@@ -341,7 +341,7 @@ TEST_CASE("Check Binary Tree Complex Additions")
         }
         string ans;
         /* Create the comparison string by adding the word with spaces sperating them */
-        for (BinaryTree<string>::iterator it = t_str.begin_preorder(); it != t_str.end_preorder(); ++it)
+        for (auto it = t_str.begin_preorder(); it != t_str.end_preorder(); ++it)
         {
             ans = ans + " " + *it;
         }
@@ -390,14 +390,14 @@ TEST_CASE("Check BinaryTree Actions")
             t_double.add_right(prev, i);
             prev = i;
         }
-        BinaryTree<double>::iterator prev_it = t_double.begin();
-        BinaryTree<double>::iterator prev_it_in = t_double.begin_inorder();
+        auto prev_it = t_double.begin();
+        auto prev_it_in = t_double.begin_inorder();
         /*In inOrder & Regulate iteration, each node should be greter than by value then the previous node in the iteration */
-        for (BinaryTree<double>::iterator it = ++(t_double.begin_inorder()); it != t_double.end_inorder(); ++it)
+        for (auto it = ++(t_double.begin_inorder()); it != t_double.end_inorder(); ++it)
         {
             CHECK_LT(*prev_it_in, *it);
         }
-        for (BinaryTree<double>::iterator it = ++(t_double.begin()); it != t_double.end(); ++it)
+        for (auto it = ++(t_double.begin()); it != t_double.end(); ++it)
         {
             CHECK_LT(*prev_it, *it);
         }
@@ -439,11 +439,11 @@ TEST_CASE("Check BinaryTree Actions")
         prev_it = t_double.begin();
         prev_it_in = t_double.begin_inorder();
         /*In inOrder & Regular iteration, each node should be less than by value then the previous node in the iteration */
-        for (BinaryTree<double>::iterator it = ++(t_double.begin_inorder()); it != t_double.end_inorder(); ++it)
+        for (auto it = ++(t_double.begin_inorder()); it != t_double.end_inorder(); ++it)
         {
             CHECK_GT(*prev_it, *it);
         }
-        for (BinaryTree<double>::iterator it = ++(t_double.begin()); it != t_double.end(); ++it)
+        for (auto it = ++(t_double.begin()); it != t_double.end(); ++it)
         {
             CHECK_GT(*prev_it, *it);
         }
@@ -520,11 +520,11 @@ TEST_CASE("Check BinaryTree Actions")
         }
         string inOrder, Regular;
         /* Build a string by iterating in pre,post, and in order*/
-        for (BinaryTree<char>::iterator it = t_char.begin_inorder(); it != t_char.end_inorder(); it++)
+        for (auto it = t_char.begin_inorder(); it != t_char.end_inorder(); it++)
         {
             inOrder += *it;
         }
-        for (BinaryTree<char>::iterator it = t_char.begin(); it != t_char.end(); it++)
+        for (auto it = t_char.begin(); it != t_char.end(); it++)
         {
             Regular += *it;
         }
@@ -550,10 +550,10 @@ TEST_CASE("Check Aditional Iterator Operators")
         CHECK_FALSE((t_bool.begin_inorder() == t_bool.end_inorder()));
         CHECK_FALSE((t_bool.begin_postorder() == t_bool.end_postorder()));
         CHECK_FALSE((t_bool.begin_preorder() == t_bool.end_preorder()));
-        BinaryTree<bool>::iterator it = t_bool.begin();
-        BinaryTree<bool>::iterator it_in = t_bool.begin_inorder();
-        BinaryTree<bool>::iterator it_post = t_bool.begin_postorder();
-        BinaryTree<bool>::iterator it_pre = t_bool.begin_preorder();
+        auto it = t_bool.begin();
+        auto it_in = t_bool.begin_inorder();
+        auto it_post = t_bool.begin_postorder();
+        auto it_pre = t_bool.begin_preorder();
         /* In post increment, begin() and end() iterators shouldn't be the same; */
         CHECK_FALSE((it++ == t_bool.end()));
         CHECK_FALSE((it_in++ == t_bool.end_inorder()));
@@ -593,13 +593,13 @@ TEST_CASE("Check Aditional Iterator Operators")
         }
         int i = 50;
         /* Comparing the increasing size to the size of the string in inOrder iteration*/
-        for (BinaryTree<string>::iterator it = t_str.begin_inorder(); it != t_str.end_inorder(); it++)
+        for (auto it = t_str.begin_inorder(); it != t_str.end_inorder(); it++)
         {
             CHECK_EQ(i--, it->size());
         }
         i = 50;
         /* Comparing the increasing size to the size of the string in regular iteration*/
-        for (BinaryTree<string>::iterator it = t_str.begin(); it != t_str.end(); it++)
+        for (auto it = t_str.begin(); it != t_str.end(); it++)
         {
             CHECK_EQ(i--, it->size());
         }
@@ -631,19 +631,19 @@ TEST_CASE("Check Aditional Iterator Operators")
         int sum_inOrder, sum_preOrder, sum_postOrder, sum_Regular;
         sum_inOrder = sum_postOrder = sum_preOrder = sum_Regular= 0;
         /* Iterate over the tree and sum all the elements, in all the methods */
-        for (BinaryTree<int>::iterator it = t_int.begin(); it != t_int.end(); it++)
+        for (auto it = t_int.begin(); it != t_int.end(); it++)
         {
             sum_Regular += *it;
         }
-        for (BinaryTree<int>::iterator it = t_int.begin_inorder(); it != t_int.end_inorder(); it++)
+        for (auto it = t_int.begin_inorder(); it != t_int.end_inorder(); it++)
         {
             sum_inOrder += *it;
         }
-        for (BinaryTree<int>::iterator it = t_int.begin_preorder(); it != t_int.end_preorder(); it++)
+        for (auto it = t_int.begin_preorder(); it != t_int.end_preorder(); it++)
         {
             sum_preOrder += *it;
         }
-        for (BinaryTree<int>::iterator it = t_int.begin_postorder(); it != t_int.end_postorder(); it++)
+        for (auto it = t_int.begin_postorder(); it != t_int.end_postorder(); it++)
         {
             sum_postOrder += *it;
         }
@@ -652,7 +652,7 @@ TEST_CASE("Check Aditional Iterator Operators")
         CHECK_EQ(sum, sum_preOrder);
         CHECK_EQ(sum, sum_postOrder);
         /* Replace 201 and 201 with 0's by using * operator */
-        for (BinaryTree<int>::iterator it = t_int.begin_inorder(); it != t_int.end_inorder(); it++)
+        for (auto it = t_int.begin_inorder(); it != t_int.end_inorder(); it++)
         {
             if (*it == 201 || *it == 202)
             {
@@ -664,19 +664,19 @@ TEST_CASE("Check Aditional Iterator Operators")
         sum = (200 + 1) * 200 / 2;
         sum_inOrder = sum_postOrder = sum_preOrder = sum_Regular = 0;
         /* Iterate over the tree and sum all the elements, in all the methods */
-        for (BinaryTree<int>::iterator it = t_int.begin(); it != t_int.end(); it++)
+        for (auto it = t_int.begin(); it != t_int.end(); it++)
         {
             sum_Regular += *it;
         }
-        for (BinaryTree<int>::iterator it = t_int.begin_inorder(); it != t_int.end_inorder(); it++)
+        for (auto it = t_int.begin_inorder(); it != t_int.end_inorder(); it++)
         {
             sum_inOrder += *it;
         }
-        for (BinaryTree<int>::iterator it = t_int.begin_preorder(); it != t_int.end_preorder(); it++)
+        for (auto it = t_int.begin_preorder(); it != t_int.end_preorder(); it++)
         {
             sum_preOrder += *it;
         }
-        for (BinaryTree<int>::iterator it = t_int.begin_postorder(); it != t_int.end_postorder(); it++)
+        for (auto it = t_int.begin_postorder(); it != t_int.end_postorder(); it++)
         {
             sum_postOrder += *it;
         }
@@ -685,7 +685,7 @@ TEST_CASE("Check Aditional Iterator Operators")
         CHECK_EQ(sum, sum_preOrder);
         CHECK_EQ(sum, sum_postOrder);
         /* Replace all the values in the tree with 0 except the value 1*/
-        for (BinaryTree<int>::iterator it = t_int.begin_inorder(); it != t_int.end_inorder(); it++)
+        for (auto it = t_int.begin_inorder(); it != t_int.end_inorder(); it++)
         {
             if (*it != 1)
             {
@@ -694,19 +694,19 @@ TEST_CASE("Check Aditional Iterator Operators")
         }
         sum_inOrder = sum_postOrder = sum_preOrder = sum_Regular = 0;
         /* Iterate over the tree and sum all the elements, in all the methods */
-        for (BinaryTree<int>::iterator it = t_int.begin(); it != t_int.end(); it++)
+        for (auto it = t_int.begin(); it != t_int.end(); it++)
         {
             sum_Regular += *it;
         }
-        for (BinaryTree<int>::iterator it = t_int.begin_inorder(); it != t_int.end_inorder(); it++)
+        for (auto it = t_int.begin_inorder(); it != t_int.end_inorder(); it++)
         {
             sum_inOrder += *it;
         }
-        for (BinaryTree<int>::iterator it = t_int.begin_preorder(); it != t_int.end_preorder(); it++)
+        for (auto it = t_int.begin_preorder(); it != t_int.end_preorder(); it++)
         {
             sum_preOrder += *it;
         }
-        for (BinaryTree<int>::iterator it = t_int.begin_postorder(); it != t_int.end_postorder(); it++)
+        for (auto it = t_int.begin_postorder(); it != t_int.end_postorder(); it++)
         {
             sum_postOrder += *it;
         }

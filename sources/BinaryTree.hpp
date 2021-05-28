@@ -1,4 +1,6 @@
 #pragma once
+#include <ostream>
+using namespace std;
 
 namespace ariel
 {

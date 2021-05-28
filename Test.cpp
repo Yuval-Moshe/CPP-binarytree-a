@@ -581,7 +581,7 @@ TEST_CASE("Check Aditional Iterator Operators")
         string root = "|";
         t_str.add_root(root);
         string prev = root;
-        for (int i = 1; i <= 50; i++)
+        for (int i = 2; i <= 50; i++)
         {
             string str;
             for (int j = 0; j < i; j++)

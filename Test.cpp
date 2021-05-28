@@ -714,5 +714,6 @@ TEST_CASE("Check Aditional Iterator Operators")
         CHECK_EQ(1, sum_inOrder);
         CHECK_EQ(1, sum_preOrder);
         CHECK_EQ(1, sum_postOrder);
-    }
+    } 
+    
 }
